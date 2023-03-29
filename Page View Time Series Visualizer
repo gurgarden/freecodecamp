@@ -1,0 +1,61 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Import data
+df = pd.read_csv('fcc-forum-pageviews.csv')
+df= df.set_index('date')
+df.head()
+
+# Clean data by filtering out days when the page views were in the top 2.5% or bottom 2.5% of the dataset
+df = df[(df['value'] >= df['value'].quantile(0.025)) & (df['value'] <= df['value'].quantile(0.975))]
+df.head()
+
+# Create a line plot
+plt.figure(figsize=(19, 6))
+line_plot = plt.plot(df, color='g')
+plt.xticks(np.arange(np.argmin(df), np.argmax(df), step=152))
+plt.title('Daily freeCodeCamp Forum Page Views 5/2016-12/2019')
+plt.xlabel('Date')
+plt.ylabel('Page Views')
+plt.show()
+
+# Modify the DataFrame including two new columns by 'Year' and 'Month'
+df_filtered['year'] = pd.DatetimeIndex(df_filtered.index).year
+df_filtered['month'] = pd.DatetimeIndex(df_filtered.index).month_name()
+
+# Create a draw_bar_plot function that draws a bar chart similar to "examples/Figure_2.png".
+df_bar = df.copy()
+df_bar["year"] = pd.DatetimeIndex(df_bar.index).year
+df_bar["month"] = pd.DatetimeIndex(df_bar.index).month_name()
+df_bar = df_bar.groupby(["year", "month"])["value"].mean().unstack()
+df_bar.head()
+
+fig = df_bar.plot(kind="bar", figsize=(15, 10), legend=True).figure
+plt.xlabel("Years")
+plt.ylabel("Average Page Views")
+plt.legend(title="Months", labels=["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"])
+plt.xticks(rotation=45)
+
+# Create a draw_box_plot function that uses Seaborn to draw two adjacent box plots similar to "examples/Figure_3.png".
+df_box = df.copy()
+df_box["year"] = pd.DatetimeIndex(df_box.index).year
+df_box["month"] = pd.DatetimeIndex(df_box.index).month_name()
+df_box.head()
+
+# Create a draw_box_plot function that uses Seaborn to draw two adjacent box plots similar to "examples/Figure_3.png".
+fig, ax = plt.subplots(figsize=(10, 5))
+ax = sns.boxplot(x="year", y="value", data=df_box)
+ax.set_xlabel("Year")
+ax.set_ylabel("Page Views")
+ax.set_title("Year-wise Box Plot (Trend)")
+plt.xticks(rotation=0)
+
+fig2, ax2 = plt.subplots(figsize=(10, 5))
+#ax2 = sns.boxplot(x="month", y="value", data=df_box, order=["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"])
+ax2 = sns.boxplot(x="month", y="value", data=df_box)
+ax2.set_xlabel("Month")
+ax2.set_ylabel("Page Views")
+ax2.set_title("Month-wise Box Plot (Seasonality)")
+plt.xticks(rotation=45)
+

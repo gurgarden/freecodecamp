@@ -1,0 +1,52 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.stats import linregress
+import numpy
+
+# Use Pandas to import the data from epa-sea-level.csv
+df = pd.read_csv('E:/!Yandex praktikum/!Дата аналитика/YP d/YP/epa-sea-level.csv')
+df.head()
+
+# Create a scatter plot using the Year column as the x-axis and the CSIRO Adjusted Sea Level column as the y-axis
+plt.scatter(df['Year'], df['CSIRO Adjusted Sea Level'])
+
+# Use the linregress function to get the slope and y-intercept of the line of best fit
+slope, intercept, r_value, p_value, std_err = linregress(df['Year'], df['CSIRO Adjusted Sea Level'])
+
+# Plot the line of best fit over the top of the scatter plot and make the line go through the year 2050 to predict the sea level rise in 2050
+plt.plot(df['Year'], intercept + slope * df['Year'], 'r', label='Linear Regression')
+#plt.plot([2050], intercept + slope * [2050], 'ro', label='Predicted Sea Level Rise in 2050')
+plt.scatter(df['Year'], df['CSIRO Adjusted Sea Level'])
+plt.title('Sea Level by CSIRO')
+plt.xlabel('Year')
+plt.ylabel('Sea Level (inches)')
+
+# Create a new DataFrame with data from year 2000 through the most recent year in the dataset
+df_recent = df[df['Year'] >= 2000]
+df_recent.head()
+
+# Get the slope and y-intercept of the line of best fit using the recent data
+Lin_Reg_recent = linregress(x=df_recent['Year'], y=df_recent['CSIRO Adjusted Sea Level'])
+print(Lin_Reg_recent)
+
+# Plot the new line of best fit over the top of the scatter plot and make the line go through the year 2050 to predict the sea level rise in 2050 if the rate of rise continues as it has since the year 2000
+x1= df_recent['Year']
+y1=df_recent['CSIRO Adjusted Sea Level']
+x2=np.arange(2000,2051)
+y2=Lin_Reg_recent.intercept + Lin_Reg_recent.slope*x2
+plt.scatter(x1, y1, label='CSIRO Sea Level')
+plt.plot(x2, y2, label='fitted line',color='r')
+
+
+# Set the x label to Year, the y label to Sea Level (inches), and the title to Rise in Sea Level
+plt.xlabel('Year')
+plt.ylabel('Sea Level (inches)')
+plt.title('Rise in Sea Level')
+
+# Add a legend to the plot
+plt.legend()
+
+# Display the plot
+plt.show()
+
+
